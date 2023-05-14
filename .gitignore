@@ -1,0 +1,10 @@
+#the build directory
+build/
+
+#the gba file and its save
+/gba_accurate_affine_transform.gba
+/gba_accurate_affine_transform.elf
+/gba_accurate_affine_transform.sav
+
+#all shortcuts
+*.lnk
