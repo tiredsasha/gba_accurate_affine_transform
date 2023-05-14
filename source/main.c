@@ -46,13 +46,17 @@ int main(void) {
 	memcpy(pal_obj_mem, kittycatPal, kittycatPalLen);
 	
 	//display control, we turn things on and off here that we want
-	//DCNT_MODE3 is mode 3, which is the simplest bitmap mode
+	//DCNT_MODE4 is mode 4, which is fullscreen and has page flipping
 	//DCNT_BG2 enables rendering of background 2 (which is what the bitmap displays on)
 	//DCNT_OBJ enables object rendering, for sprites
 	//DCNT_OBJ_1D sets it so tiles are rendered from 1d mode
-	REG_DISPCNT = DCNT_MODE3 | DCNT_BG2 | DCNT_OBJ | DCNT_OBJ_1D;
+	REG_DISPCNT = DCNT_MODE4 | DCNT_BG2 | DCNT_OBJ | DCNT_OBJ_1D;
 	//hide any sprites already on screen
 	oam_init(obj_buffer,128);
+	
+	//add two colors to the background palette, for the bitmap
+	pal_bg_mem[1] = 0b0000110001111111; //red
+	pal_bg_mem[2] = 0b0000111111100011; //green
 	
 	//enable vsync
 	irq_init(NULL);
@@ -69,8 +73,8 @@ int main(void) {
 	sillykitty_transform = &obj_aff_buffer[0];
 	
 	while (1) {
-		//reset the bitmap with black
-		m3_fill(0);
+		//reset the bitmap
+		m4_fill(0);
 		
 		//grab the keys
 		key_poll();
@@ -125,14 +129,16 @@ int main(void) {
 					(int)(aff_x1 + aff_width/2 - sprite_width/2),
 					(int)(aff_y1 + aff_height/2 - sprite_height/2));
 		
-		//draw a rectangle on the bitmap to show what we _want_ to display
-		m3_frame((int)aff_x1,(int)aff_y1,(int)aff_x2+1,(int)aff_y2+1,CLR_RED);
-		//draw a rectangle around the previous one to make sure the sprite hasn't gone too far
-		m3_frame((int)aff_x1-1,(int)aff_y1-1,(int)aff_x2+2,(int)aff_y2+2,CLR_GREEN);
+		//draw a red rectangle on the bitmap to show what we _want_ to display
+		m4_frame((int)aff_x1,(int)aff_y1,(int)aff_x2+1,(int)aff_y2+1, 1);
+		//draw a green rectangle around the previous one to make sure the sprite hasn't gone too far
+		m4_frame((int)aff_x1-1,(int)aff_y1-1,(int)aff_x2+2,(int)aff_y2+2, 2);
 		
 		//vsync
 		VBlankIntrWait();
 		//update oam
 		oam_copy(oam_mem, obj_buffer, 128);
+		//flip the page
+		vid_flip();
 	}
 }
