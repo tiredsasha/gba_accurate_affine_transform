@@ -87,13 +87,13 @@ int main(void) {
 		//keep this within screen bounds
 		if (aff_x1 < 1) {
 			aff_x1 = 1;
-		} else if (aff_x1 > 237) {
-			aff_x1 = 237;
+		} else if (aff_x1 > 238) {
+			aff_x1 = 238;
 		}
 		if (aff_x2 < 1) {
 			aff_x2 = 1;
-		} else if (aff_x2 > 237) {
-			aff_x2 = 237;
+		} else if (aff_x2 > 238) {
+			aff_x2 = 238;
 		}
 		if (aff_y1 < 1) {
 			aff_y1 = 1;
